@@ -1,0 +1,90 @@
+<!-- <p>
+    <a href="{% url 'park_system:index' %}">Fray</a>
+     -
+{% if user.is_authenticated %}
+    Hello, {{ user.username }}.
+    <a href="{% url 'park_system:vehicles' %}">Your vehicles</a>
+{% else %}
+<a href="{% url 'accounts:register' %}">Register</a>
+<a href="{% url 'accounts:login' %}">Log in</a>
+{% endif %}
+{% if user.is_authenticated %}
+<hr />
+<form action="{% url 'accounts:logout' %}" method='post'>
+{% csrf_token %}
+<button name='submit'>Log out</button>
+</form>
+{% endif %}
+</p> -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Parking System</title>
+
+    <!-- Bootstrap -->
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+    <style>
+        body {
+            background-color: #0b1d3a;
+            color: #ffffff;
+        }
+
+        .navbar {
+            background-color: #08142b;
+        }
+
+        .card {
+            background-color: #112a5c;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: #1e3a8a;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-dark px-4">
+    <a class="navbar-brand" href="{% url 'park_system:index' %}">Fray</a>
+</nav>
+    {% if user.is_authenticated %}
+<ul class="navbar-nav me-auto mb-2 mb-md-0">
+<li class="nav-item">
+<a class="nav-link" href="{% url 'park_system:vehicles' %}">
+Your vehicles</a></li>
+</ul>
+{% endif %}
+<ul class="navbar-nav ms-auto mb-2 mb-md-0">
+    {% if user.is_authenticated %}
+<li class="nav-item">
+<span class="navbar-text me-2">Hello, {{ user.username }}.
+</span></li>
+{% else %}
+<li class="nav-item">
+<a class="nav-link" href="{% url 'accounts:register' %}">Register</a></li>
+<li class="nav-item">
+<a class="nav-link" href="{% url 'accounts:login' %}">Log in</a></li>
+{% endif %}
+</ul>
+{% if user.is_authenticated %}
+<form action="{% url 'accounts:logout' %}" method='post'>
+    {% csrf_token %}
+  <button name='submit' class='btn btn-outline-secondary btn-sm'>Log out</button>
+</form>
+{% endif %}
+<div class="container mt-4">
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>
+

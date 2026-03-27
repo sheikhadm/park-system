@@ -1,0 +1,34 @@
+{% extends "park_system/base.html" %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between mb-3">
+    <h2>Your Vehicles</h2>
+    <a href="{% url 'park_system:add_vehicle' %}" class="btn btn-primary">+ Add Vehicle</a>
+</div>
+
+<div class="row">
+
+    {% for vehicle in vehicles %}
+        <div class="col-md-4 mb-3">
+            <div class="card p-3">
+
+                <h5>{{ vehicle.vehicle_make }}</h5>
+                <p>{{ vehicle.number_plate }}</p>
+
+                <form method="POST" action="{% url 'park_system:start_session' vehicle.id %}">
+                    {% csrf_token %}
+                    <button class="btn btn-primary w-100">
+                        Start Parking Session
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    {% empty %}
+         <li class="list-group-item border-0">No vehicles have been added yet.</li>
+    {% endfor %}
+</div>
+
+{% endblock content %}

@@ -1,0 +1,18 @@
+{% extends "park_system/base.html" %}
+{% load django_bootstrap5 %}
+
+
+{% block content %}
+<div class="card p-4 col-md-6 mx-auto">
+    <h2>Add Vehicle</h2>
+
+    <form method="POST"  action="{% url 'park_system:add_vehicle' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button class="btn btn-primary w-100 mt-2">
+            Save Vehicle
+        </button>
+    </form>
+</div>
+{% endblock content %}

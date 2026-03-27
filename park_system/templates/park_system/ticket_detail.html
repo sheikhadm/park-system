@@ -1,0 +1,47 @@
+{% extends "park_system/base.html" %}
+{% load django_bootstrap5 %}
+{% block content %}
+<!-- <h1>Parking Ticket</h1>
+
+<p><strong>Code:</strong> {{ ticket.code }}</p>
+<p><strong>Vehicle:</strong> {{ ticket.vehicle.vehicle_make }}</p>
+<p><strong>Entry Time:</strong> {{ ticket.entry_time }}</p>
+
+{% if ticket.exit_time %}
+    <p><strong>Exit Time:</strong> {{ ticket.exit_time }}</p>
+    <p><strong>Duration:</strong> {{ duration }}</p>
+{% else %}
+    <form method="POST" action="{% url 'park_system:end_session' ticket.code %}">
+        {% csrf_token %}
+        <button type="submit">Exit Parking</button>
+    </form>
+{% endif %} -->
+<div class="card p-4 col-md-6 mx-auto">
+
+    <h2>🎟 Parking Ticket</h2>
+
+    <hr>
+
+    <p><strong>Code:</strong> {{ ticket.code }}</p>
+    <p><strong>Vehicle:</strong> {{ ticket.vehicle.vehicle_make }}</p>
+    <p><strong>Entry Time:</strong> {{ ticket.entry_time }}</p>
+
+    {% if ticket.exit_time %}
+        <p><strong>Exit Time:</strong> {{ ticket.exit_time }}</p>
+        <p><strong>Duration:</strong> {{ duration }}</p>
+
+        <div class="alert alert-success mt-3">
+            Session Completed
+        </div>
+
+    {% else %}
+        <form method="POST" action="{% url 'park_system:end_session' ticket.code %}">
+            {% csrf_token %}
+            <button class="btn btn-danger w-100 mt-3">
+                Exit Parking
+            </button>
+        </form>
+    {% endif %}
+
+</div>
+{% endblock content %}

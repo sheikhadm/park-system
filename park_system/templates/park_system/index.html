@@ -1,0 +1,26 @@
+{% extends "park_system/base.html" %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="card p-4">
+    <h1>Welcome to Parking System</h1>
+    <p class="mt-3">Manage your vehicles and parking sessions easily.</p>
+</div>
+
+<div class="card p-4 mt-4">
+    <h3>📌 How to Use</h3>
+
+    <ol class="mt-3">
+        <li><strong>Add a Vehicle</strong> – Register your car details</li>
+        <li><strong>Start Parking</strong> – Click "Start Parking" on a vehicle</li>
+        <li><strong>Get Ticket</strong> – A ticket with unique code is generated</li>
+        <li><strong>Exit Parking</strong> – Use ticket page to end session</li>
+        <li><strong>View Duration</strong> – See how long you parked</li>
+    </ol>
+
+    <a href="{% url 'park_system:vehicles' %}" class="btn btn-primary mt-3">
+        Go to Dashboard
+    </a>
+</div>
+
+{% endblock content %}
