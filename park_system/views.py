@@ -4,6 +4,7 @@ from django.http import Http404, JsonResponse
 from .models import Vehicle,Ticket
 from .forms import VehicleForm
 from django.http import HttpResponse
+from django.contrib import messages
 # Create your views here.
 
 def index(request):
@@ -38,6 +39,12 @@ def start_session(request, vehicle_id):
         vehicle = get_object_or_404(Vehicle, id=vehicle_id)
         if vehicle.owner != request.user:
             raise Http404
+        
+        active_session_exists = Ticket.objects.filter(vehicle=vehicle,exit_time__isnull=True).exists()
+
+        if active_session_exists:
+            messages.error(request, "Vehicle already has an active session.")
+            return redirect("park_system:vehicles")
 
         ticket = Ticket.objects.create(vehicle=vehicle)
         return redirect("park_system:ticket_detail", code=ticket.code)
