@@ -13,7 +13,7 @@ urlpatterns = [
     path("vehicles/<int:vehicle_id>/start-session/", views.start_session, name="start_session"),
     path("ticket/<uuid:code>/", views.ticket_detail, name="ticket_detail"),
     path('end_session/<uuid:code>/', views.end_session, name='end_session'),
-    # path('edit_entry/<int:entry_id>/', views.edit_entry, name='edit_entry'),
+    path('tickets', views.tickets, name='tickets'),
     # path('delete_entry/<int:entry_id>/', views.delete_entry, name='delete_entry'),
     # path('delete_topic/<int:topic_id>/', views.delete_topic, name='delete_topic'),
 

@@ -71,11 +71,19 @@ def end_session(request, code):
     ticket = get_object_or_404(Ticket, code=code,vehicle__owner=request.user)
 
     if ticket.exit_time is not None:
-        return JsonResponse({"error": "Session already closed"}, status=400)
+        messages.error(request,  "Session already closed")
+        return redirect("park_system:tickets")
+
 
     ticket.close_session()
 
     duration = ticket.exit_time - ticket.entry_time
     minutes = duration.total_seconds() / 60
     return redirect("park_system:ticket_detail", code=ticket.code)
+
+@login_required
+def tickets(request):
+    tickets = Ticket.objects.filter(vehicle__owner =request.user)
+    context = { "tickets": tickets }
+    return render(request, "park_system/tickets.html", context)
     

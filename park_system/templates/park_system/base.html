@@ -1,90 +1,152 @@
-<!-- <p>
-    <a href="{% url 'park_system:index' %}">Fray</a>
-     -
-{% if user.is_authenticated %}
-    Hello, {{ user.username }}.
-    <a href="{% url 'park_system:vehicles' %}">Your vehicles</a>
-{% else %}
-<a href="{% url 'accounts:register' %}">Register</a>
-<a href="{% url 'accounts:login' %}">Log in</a>
-{% endif %}
-{% if user.is_authenticated %}
-<hr />
-<form action="{% url 'accounts:logout' %}" method='post'>
-{% csrf_token %}
-<button name='submit'>Log out</button>
-</form>
-{% endif %}
-</p> -->
+
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>Parking System</title>
 
-    <!-- Bootstrap -->
-{% load django_bootstrap5 %}
-{% bootstrap_css %}
-{% bootstrap_javascript %}
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+
     <style>
         body {
-            background-color: #0b1d3a;
-            color: #ffffff;
+            background: linear-gradient(135deg, #0b1d3a, #0f2a5c);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        /* Navbar */
         .navbar {
             background-color: #08142b;
+            border-bottom: 1px solid #1e3a8a;
         }
 
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.3rem;
+            color: #60a5fa !important;
+        }
+
+        .nav-link {
+            color: #cbd5f5 !important;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #60a5fa !important;
+        }
+
+        /* Cards */
         .card {
-            background-color: #112a5c;
-            border: none;
+            background: rgba(17, 42, 92, 0.85);
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
         }
 
+        /* Buttons */
         .btn-primary {
-            background-color: #1e3a8a;
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
             border: none;
+            border-radius: 8px;
         }
 
         .btn-primary:hover {
-            background-color: #2563eb;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+        }
+
+        .btn-outline-secondary {
+            border-color: #3b82f6;
+            color: #cbd5f5;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #1e3a8a;
+            color: white;
+        }
+
+        /* Alerts */
+        .alert {
+            border-radius: 10px;
+            margin: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        /* Container spacing */
+        .container {
+            margin-top: 30px;
+        }
+
+        /* Smooth fade animation */
+        .alert {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 
 <body>
 
-<nav class="navbar navbar-dark px-4">
+<nav class="navbar navbar-expand-lg navbar-dark px-4">
     <a class="navbar-brand" href="{% url 'park_system:index' %}">Fray</a>
+
+    <div class="collapse navbar-collapse">
+        {% if user.is_authenticated %}
+        <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'park_system:vehicles' %}">Your vehicles</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'park_system:tickets' %}">Tickets</a>
+            </li>
+        </ul>
+        {% endif %}
+
+        <ul class="navbar-nav ms-auto">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <span class="navbar-text me-3">Hello, {{ user.username }}</span>
+            </li>
+            <li class="nav-item">
+                <form action="{% url 'accounts:logout' %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-outline-secondary btn-sm">Log out</button>
+                </form>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'accounts:register' %}">Register</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'accounts:login' %}">Log in</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
 </nav>
-    {% if user.is_authenticated %}
-<ul class="navbar-nav me-auto mb-2 mb-md-0">
-<li class="nav-item">
-<a class="nav-link" href="{% url 'park_system:vehicles' %}">
-Your vehicles</a></li>
-</ul>
+
+<!-- Messages -->
+{% if messages %}
+    <div class="container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
 {% endif %}
-<ul class="navbar-nav ms-auto mb-2 mb-md-0">
-    {% if user.is_authenticated %}
-<li class="nav-item">
-<span class="navbar-text me-2">Hello, {{ user.username }}.
-</span></li>
-{% else %}
-<li class="nav-item">
-<a class="nav-link" href="{% url 'accounts:register' %}">Register</a></li>
-<li class="nav-item">
-<a class="nav-link" href="{% url 'accounts:login' %}">Log in</a></li>
-{% endif %}
-</ul>
-{% if user.is_authenticated %}
-<form action="{% url 'accounts:logout' %}" method='post'>
-    {% csrf_token %}
-  <button name='submit' class='btn btn-outline-secondary btn-sm'>Log out</button>
-</form>
-{% endif %}
-<div class="container mt-4">
+
+<!-- Page Content -->
+<div class="container">
     {% block content %}{% endblock %}
 </div>
 
 </body>
 </html>
-

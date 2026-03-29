@@ -1,0 +1,34 @@
+{% extends "park_system/base.html" %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between mb-3">
+    <h2>Your Tickets</h2>
+  
+</div>
+
+<div class="row">
+
+    {% for ticket in tickets %}
+        <div class="col-md-4 mb-3">
+            <div class="card p-3">
+
+                <h5>{{ ticket.code }}</h5>
+                <p>{{ ticket.entry_time }}</p>
+
+                <form method="POST" action="{% url 'park_system:ticket_detail' ticket.code %}">
+                    {% csrf_token %}
+                    <button class="btn btn-primary w-100">
+                        Check Ticket Details
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    {% empty %}
+         <li class="list-group-item border-0">You have no sessions.</li>
+    {% endfor %}
+</div>
+
+{% endblock content %}
