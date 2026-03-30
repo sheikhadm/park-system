@@ -6,7 +6,7 @@ import uuid
 
 plate_validator = RegexValidator(
     regex=r'^[A-Za-z]{3}-\d{3}-[A-Za-z]{2}$',
-    message="Number plate must be in format: ABC-123DE"
+    message="Number plate must be in format: ABC-123-DE"
 )
 # Create your models here.
 class Vehicle(models.Model):
