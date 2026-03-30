@@ -84,6 +84,36 @@ def end_session(request, code):
 @login_required
 def tickets(request):
     tickets = Ticket.objects.filter(vehicle__owner =request.user)
-    context = { "tickets": tickets }
+    active_tickets = Ticket.objects.filter(
+        vehicle__owner=request.user,
+        exit_time__isnull=True
+    )
+
+    closed_tickets = Ticket.objects.filter(
+        vehicle__owner=request.user,
+        exit_time__isnull=False
+    )
+
+    context = {
+        "tickets": tickets,
+        "active_tickets": active_tickets,
+        "closed_tickets": closed_tickets
+    }
+
     return render(request, "park_system/tickets.html", context)
+
+
+@login_required
+def delete_vehicle(request, vehicle_id):
+    vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+
+    # Ensure only the owner can delete
+    if vehicle.owner != request.user:
+        raise Http404
+
+    if request.method == "POST":
+        vehicle.delete()
+        return redirect('park_system:vehicles')
+
+    return render(request, 'park_system/delete_vehicle.html', {'vehicle': vehicle})
     

@@ -3,32 +3,86 @@
 
 {% block content %}
 
-<div class="d-flex justify-content-between mb-3">
-    <h2>Your Tickets</h2>
-  
+
+
+<!-- 🔴 ACTIVE TICKETS -->
+<h2 class="mb-3">Active Tickets</h2>
+<div class="row">
+    {% if active_tickets %}
+        {% for ticket in active_tickets %}
+            <div class="col-md-4 mb-3">
+                <div class="card p-3 border-danger">
+
+                    <p><strong>Code:</strong> {{ ticket.code }}</p>
+                    <p><strong>Vehicle:</strong> {{ ticket.vehicle.vehicle_make }}</p>
+                    <p><strong>Entry Time:</strong> {{ ticket.entry_time }}</p>
+
+                    <form method="POST" action="{% url 'park_system:end_session' ticket.code %}">
+                        {% csrf_token %}
+                        <button class="btn btn-danger w-100">End Session</button>
+                    </form>
+
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No active sessions</p>
+    {% endif %}
 </div>
 
-<div class="row">
 
+<hr>
+
+
+<!-- 🟢 CLOSED TICKETS -->
+<h2 class="mb-3">Closed Tickets</h2>
+<div class="row">
+    {% if closed_tickets %}
+        {% for ticket in closed_tickets %}
+            <div class="col-md-4 mb-3">
+                <div class="card p-3 border-success">
+
+                    <p><strong>Code:</strong> {{ ticket.code }}</p>
+                    <p><strong>Vehicle:</strong> {{ ticket.vehicle.vehicle_make }}</p>
+                    <p><strong>Entry Time:</strong> {{ ticket.entry_time }}</p>
+                    <p><strong>Exit Time:</strong> {{ ticket.exit_time }}</p>
+
+                    <a href="{% url 'park_system:ticket_detail' ticket.code %}" class="btn btn-primary w-100">
+                        Check Ticket Details
+                    </a>
+
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No closed tickets</p>
+    {% endif %}
+</div>
+
+
+<hr>
+
+
+<!-- 🔵 ALL TICKETS -->
+<h2 class="mb-3">All Tickets</h2>
+<div class="row">
     {% for ticket in tickets %}
         <div class="col-md-4 mb-3">
-            <div class="card p-3">
+            <div class="card p-3 border-primary">
 
                 <h5>{{ ticket.code }}</h5>
                 <p>{{ ticket.entry_time }}</p>
 
-                <form method="POST" action="{% url 'park_system:ticket_detail' ticket.code %}">
-                    {% csrf_token %}
-                    <button class="btn btn-primary w-100">
-                        Check Ticket Details
-                    </button>
-                </form>
+                <a href="{% url 'park_system:ticket_detail' ticket.code %}" class="btn btn-primary w-100">
+                    Check Ticket Details
+                </a>
 
             </div>
         </div>
     {% empty %}
-         <li class="list-group-item border-0">You have no sessions.</li>
+        <p>You have no sessions.</p>
     {% endfor %}
 </div>
+
 
 {% endblock content %}

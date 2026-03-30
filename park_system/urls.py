@@ -15,6 +15,6 @@ urlpatterns = [
     path('end_session/<uuid:code>/', views.end_session, name='end_session'),
     path('tickets', views.tickets, name='tickets'),
     # path('delete_entry/<int:entry_id>/', views.delete_entry, name='delete_entry'),
-    # path('delete_topic/<int:topic_id>/', views.delete_topic, name='delete_topic'),
+    path('delete_vehicle/<int:vehicle_id>/', views.delete_vehicle, name='delete_vehicle'),
 
 ]

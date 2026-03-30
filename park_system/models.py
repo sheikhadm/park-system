@@ -1,8 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
 from django.utils import timezone
 import uuid
 
+plate_validator = RegexValidator(
+    regex=r'^[A-Za-z]{3}-\d{3}-[A-Za-z]{2}$',
+    message="Number plate must be in format: ABC-123DE"
+)
 # Create your models here.
 class Vehicle(models.Model):
 
@@ -17,8 +22,12 @@ class Vehicle(models.Model):
         choices=VehicleType.choices
     )
     vehicle_make = models.CharField(max_length = 100)
-    number_plate = models.CharField(max_length = 100)
+    number_plate = models.CharField(max_length = 100,validators=[plate_validator],unique=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        self.number_plate = self.number_plate.upper()
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return self.vehicle_make
