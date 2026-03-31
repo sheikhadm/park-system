@@ -1,7 +1,8 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.http import Http404, JsonResponse
-from .models import Vehicle,Ticket
+from .models import Vehicle,Ticket,ParkingSlot
 from .forms import VehicleForm
 from django.http import HttpResponse
 from django.contrib import messages
@@ -41,12 +42,31 @@ def start_session(request, vehicle_id):
             raise Http404
         
         active_session_exists = Ticket.objects.filter(vehicle=vehicle,exit_time__isnull=True).exists()
-
         if active_session_exists:
             messages.error(request, "Vehicle already has an active session.")
             return redirect("park_system:vehicles")
+        slot = ParkingSlot.objects.filter(is_occupied=False).first()
 
-        ticket = Ticket.objects.create(vehicle=vehicle)
+        if not slot:
+            messages.error(request, "No parking slots available.")
+            return redirect("park_system:vehicles")
+        
+        with transaction.atomic():
+            slot = Slot.objects.select_for_update().get(id=slot.id)
+
+            if slot.is_occupied:
+                raise ValueError("Slot already taken")
+
+            slot.is_occupied = True
+            slot.save()
+
+            ticket = Ticket.objects.create(
+                vehicle=vehicle,
+                slot=slot
+            )
+
+        
+
         return redirect("park_system:ticket_detail", code=ticket.code)
 
 @login_required
@@ -79,6 +99,11 @@ def end_session(request, code):
 
     duration = ticket.exit_time - ticket.entry_time
     minutes = duration.total_seconds() / 60
+    if ticket.slot:
+        ticket.slot.is_occupied = False
+        ticket.slot.save()
+
+    ticket.save()
     return redirect("park_system:ticket_detail", code=ticket.code)
 
 @login_required

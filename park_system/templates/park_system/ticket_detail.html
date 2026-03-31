@@ -25,6 +25,7 @@
     <p><strong>Code:</strong> {{ ticket.code }}</p>
     <p><strong>Vehicle:</strong> {{ ticket.vehicle.vehicle_make }}</p>
     <p><strong>Vehicle Number Plate:</strong> {{ ticket.vehicle.number_plate }}</p>
+    <p><strong>Parking Slot:</strong> {{ ticket.slot.slot_number }}</p>
     <p><strong>Entry Time:</strong> {{ ticket.entry_time }}</p>
 
     {% if ticket.exit_time %}

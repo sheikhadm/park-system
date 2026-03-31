@@ -32,10 +32,23 @@ class Vehicle(models.Model):
     def __str__(self):
         return self.vehicle_make
 
+class ParkingSlot(models.Model):
+    slot_number = models.PositiveIntegerField(unique=True)
+    is_occupied = models.BooleanField(default=False)
 
+    def __str__(self):
+        return f"Slot {self.slot_number}"
+
+        
 class Ticket(models.Model):
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    slot = models.OneToOneField(
+        ParkingSlot,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
 
     entry_time = models.DateTimeField(auto_now_add=True)
     exit_time = models.DateTimeField(null=True, blank=True)
@@ -45,3 +58,5 @@ class Ticket(models.Model):
 
         self.exit_time = timezone.now()
         self.save()
+
+
