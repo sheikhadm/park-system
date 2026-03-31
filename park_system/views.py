@@ -37,9 +37,7 @@ def vehicles(request):
 @login_required
 def start_session(request, vehicle_id):
     if request.method != "POST":
-        logger.warning(f"start_session called with {request.method} for vehicle {vehicle_id}")
         return JsonResponse({"error": "Invalid request"}, status=405)
-    logger.info(f"POST received for vehicle {vehicle_id}")
     vehicle = get_object_or_404(Vehicle, id=vehicle_id)
     if vehicle.owner != request.user:
         raise Http404
@@ -48,25 +46,21 @@ def start_session(request, vehicle_id):
     if active_session_exists:
         messages.error(request, "Vehicle already has an active session.")
         return redirect("park_system:vehicles")
-
+    
+    slot = None
+    ticket = None 
     with transaction.atomic():
         # Lock the row so no other request can grab the same slot simultaneously
         slot = ParkingSlot.objects.select_for_update().filter(is_occupied=False).first()
-        logger.info(f"Slot found: {slot}, Free slots: {ParkingSlot.objects.filter(is_occupied=False).count()}")
-        print("=== DEBUG ===")
-        print(f"Slot found: {slot}")
-        print(f"Free slots count: {ParkingSlot.objects.filter(is_occupied=False).count()}")
+      
 
         if not slot:
-            logger.error("NO SLOT FOUND - this should not happen")
-            print("NO SLOT - redirecting")
             messages.error(request, "No parking slots available.")
             return redirect("park_system:vehicles")
 
         slot.is_occupied = True
         slot.save()
-        print(f"Slot saved as occupied: {slot.is_occupied}")
-        logger.info(f"Ticket created: {ticket.code}")
+        
 
 
         ticket = Ticket.objects.create(
