@@ -43,7 +43,7 @@ class ParkingSlot(models.Model):
 class Ticket(models.Model):
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    slot = models.OneToOneField(
+    slot = models.ForeignKey(
         ParkingSlot,
         on_delete=models.SET_NULL,
         null=True,
