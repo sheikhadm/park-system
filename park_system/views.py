@@ -50,7 +50,9 @@ def start_session(request, vehicle_id):
         
         
         with transaction.atomic():
-            slot = ParkingSlot.objects.select_for_update().filter(is_occupied=False).first()
+            slot = ParkingSlot.objects.select_for_update(skip_locked=True)\
+                .filter(is_occupied=False)\
+                .first()
             if not slot:
                 messages.error(request, "No parking slots available.")
                 return redirect("park_system:vehicles")
