@@ -95,15 +95,16 @@ def end_session(request, code):
         return redirect("park_system:tickets")
 
 
-    ticket.close_session()
 
     duration = ticket.exit_time - ticket.entry_time
     minutes = duration.total_seconds() / 60
-    if ticket.slot:
-        ticket.slot.is_occupied = False
-        ticket.slot.save()
+    with transaction.atomic():
+        ticket.close_session()
 
-    ticket.save()
+        if ticket.slot:
+            slot = ParkingSlot.objects.select_for_update().get(id=ticket.slot.id)
+            slot.is_occupied = False
+            slot.save()
     return redirect("park_system:ticket_detail", code=ticket.code)
 
 @login_required
