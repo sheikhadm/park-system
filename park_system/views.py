@@ -46,7 +46,6 @@ def start_session(request, vehicle_id):
             messages.error(request, "Vehicle already has an active session.")
             return redirect("park_system:vehicles")
 
-        slot = ParkingSlot.objects.filter(is_occupied=False).first()
 
         
         
