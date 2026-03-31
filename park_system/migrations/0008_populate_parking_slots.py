@@ -4,6 +4,7 @@ from django.db import migrations
 
 def create_parking_slots(apps, schema_editor):
     ParkingSlot = apps.get_model('park_system', 'ParkingSlot')
+    ParkingSlot.objects.all().delete()
     ParkingSlot.objects.bulk_create([
         ParkingSlot(slot_number=i, is_occupied=False)
         for i in range(1, 201)  # creates 200 slots
