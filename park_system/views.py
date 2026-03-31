@@ -50,24 +50,19 @@ def start_session(request, vehicle_id):
         
         
         with transaction.atomic():
-            slot = ParkingSlot.objects.select_for_update(skip_locked=True)\
-                .filter(is_occupied=False)\
-                .first()
+            slot = ParkingSlot.objects.filter(is_occupied=False).first()
             if not slot:
                 messages.error(request, "No parking slots available.")
                 return redirect("park_system:vehicles")
             
-
-            slot.is_occupied = True
-            slot.save()
+            if ParkingSlot.objects.filter(id=slot.id, is_occupied=False).exists():
+                slot.is_occupied = True
+                slot.save()
 
             ticket = Ticket.objects.create(
                 vehicle=vehicle,
                 slot=slot
             )
-
-        
-
         return redirect("park_system:ticket_detail", code=ticket.code)
 
 @login_required
