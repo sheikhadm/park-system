@@ -49,13 +49,19 @@ def start_session(request, vehicle_id):
     with transaction.atomic():
         # Lock the row so no other request can grab the same slot simultaneously
         slot = ParkingSlot.objects.select_for_update().filter(is_occupied=False).first()
+        print("=== DEBUG ===")
+        print(f"Slot found: {slot}")
+        print(f"Free slots count: {ParkingSlot.objects.filter(is_occupied=False).count()}")
 
         if not slot:
+            print("NO SLOT - redirecting")
             messages.error(request, "No parking slots available.")
             return redirect("park_system:vehicles")
 
         slot.is_occupied = True
         slot.save()
+        print(f"Slot saved as occupied: {slot.is_occupied}")
+
 
         ticket = Ticket.objects.create(
             vehicle=vehicle,
