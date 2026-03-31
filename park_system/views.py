@@ -94,10 +94,6 @@ def end_session(request, code):
         messages.error(request,  "Session already closed")
         return redirect("park_system:tickets")
 
-
-
-    duration = ticket.exit_time - ticket.entry_time
-    minutes = duration.total_seconds() / 60
     with transaction.atomic():
         ticket.close_session()
 
