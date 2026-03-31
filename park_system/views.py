@@ -45,17 +45,17 @@ def start_session(request, vehicle_id):
         if active_session_exists:
             messages.error(request, "Vehicle already has an active session.")
             return redirect("park_system:vehicles")
+
         slot = ParkingSlot.objects.filter(is_occupied=False).first()
 
-        if not slot:
-            messages.error(request, "No parking slots available.")
-            return redirect("park_system:vehicles")
+        
         
         with transaction.atomic():
-            slot = Slot.objects.select_for_update().get(id=slot.id)
-
-            if slot.is_occupied:
-                raise ValueError("Slot already taken")
+            slot = ParkingSlot.objects.select_for_update().filter(is_occupied=False).first()
+            if not slot:
+                messages.error(request, "No parking slots available.")
+                return redirect("park_system:vehicles")
+            
 
             slot.is_occupied = True
             slot.save()
