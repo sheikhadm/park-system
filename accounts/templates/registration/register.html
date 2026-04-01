@@ -9,7 +9,7 @@
 
             <h4 class="card-title">Create an Account</h4>
 
-            <form action="{% url 'accounts:register' %}" method="post">
+            <form action="{% url 'accounts:register' %}" method="post" class="text-white">
                 {% csrf_token %}
 
                 {{ form.as_div }}
