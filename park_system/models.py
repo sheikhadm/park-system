@@ -52,6 +52,7 @@ class Ticket(models.Model):
 
     entry_time = models.DateTimeField(auto_now_add=True)
     exit_time = models.DateTimeField(null=True, blank=True)
+    fee = models.PositiveIntegerField(null=True, blank=True)
     def close_session(self):
         if self.exit_time is not None:
             raise ValueError("Session already closed")
