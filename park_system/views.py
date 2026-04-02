@@ -7,6 +7,7 @@ from .forms import VehicleForm
 from django.http import HttpResponse
 from django.contrib import messages
 import logging
+import math
 logger = logging.getLogger(__name__)
 # Create your views here.
 
@@ -75,9 +76,18 @@ def ticket_detail(request, code):
     ticket = get_object_or_404(Ticket, code=code,vehicle__owner=request.user)
 
     duration = None
+    duration_display = None
+
     if ticket.exit_time:
         duration = ticket.exit_time - ticket.entry_time
-        duration = duration.total_seconds() / 3600
+        total_seconds = int(duration.total_seconds())
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+
+        if hours > 0:
+            duration_display = f"{hours} hour(s) {minutes} minute(s)"
+        else:
+            duration_display = f"{minutes} minute(s)"
 
     return render(request, "park_system/ticket_detail.html", {
         "ticket": ticket,
