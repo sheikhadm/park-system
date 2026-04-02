@@ -77,6 +77,7 @@ def ticket_detail(request, code):
     duration = None
     if ticket.exit_time:
         duration = ticket.exit_time - ticket.entry_time
+        duration = duration.total_seconds() / 3600
 
     return render(request, "park_system/ticket_detail.html", {
         "ticket": ticket,
