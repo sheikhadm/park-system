@@ -30,8 +30,8 @@
 
     {% if ticket.exit_time %}
         <p><strong>Exit Time:</strong> {{ ticket.exit_time }}</p>
-        <p><strong>Duration:</strong> {{ duration }}</p>
-        <p><strong>Parking Fee:</strong> ₦{{ duration }}</p>
+        <p><strong>Duration:</strong> {{ duration.total_seconds() / 3600 }} Hour(s)</p>
+        <p><strong>Parking Fee:</strong> ₦{{ ticket.fee }}</p>
 
         <div class="alert alert-success mt-3">
             Session Completed
