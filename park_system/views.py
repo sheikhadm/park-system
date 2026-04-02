@@ -91,7 +91,7 @@ def ticket_detail(request, code):
 
     return render(request, "park_system/ticket_detail.html", {
         "ticket": ticket,
-        "duration": duration
+        "duration": duration_display
     })
 
 @login_required
