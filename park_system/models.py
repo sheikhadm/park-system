@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.utils import timezone
 import uuid
+import math
 
 plate_validator = RegexValidator(
     regex=r'^[A-Za-z]{3}-\d{3}-[A-Za-z]{2}$',
@@ -52,12 +53,20 @@ class Ticket(models.Model):
 
     entry_time = models.DateTimeField(auto_now_add=True)
     exit_time = models.DateTimeField(null=True, blank=True)
-    fee = models.PositiveIntegerField(null=True, blank=True)
+    amount = models.PositiveIntegerField(null=True, blank=True)
     def close_session(self):
         if self.exit_time is not None:
             raise ValueError("Session already closed")
 
         self.exit_time = timezone.now()
+        self.save()
+    
+    def set_amount(self):
+        if self.exit_time is None:
+            raise ValueError("Session is Active")
+        duration = ticket.exit_time - ticket.entry_time
+        hours = duration.total_seconds() / 3600
+        self.amount = math.ceil(hours) * 1000
         self.save()
 
 

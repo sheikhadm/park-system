@@ -112,10 +112,7 @@ def end_session(request, code):
             slot = ParkingSlot.objects.select_for_update().get(id=ticket.slot.id)
             slot.is_occupied = False
             slot.save()
-    duration = ticket.exit_time - ticket.entry_time
-    hours = duration.total_seconds() / 3600
-    ticket.fee = math.ceil(hours) * 1000
-    ticket.save()
+    ticket.set_amount()
     return redirect("park_system:ticket_detail", code=ticket.code)
 
 @login_required
