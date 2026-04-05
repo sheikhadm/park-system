@@ -64,7 +64,7 @@ class Ticket(models.Model):
     def set_amount(self):
         if self.exit_time is None:
             raise ValueError("Session is Active")
-        duration = ticket.exit_time - ticket.entry_time
+        duration = self.exit_time - self.entry_time
         hours = duration.total_seconds() / 3600
         self.amount = math.ceil(hours) * 1000
         self.save()
