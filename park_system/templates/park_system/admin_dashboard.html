@@ -1,0 +1,225 @@
+{% extends "park_system/base.html" %}
+{% load django_bootstrap5 %}
+
+
+{% block content %}
+<div class="topbar">
+    <strong>🅿 ParkSystem — Admin</strong>
+    <div>
+        <a href="{% url 'park_system:audit_logs' %}">Audit Logs</a> &nbsp;|&nbsp;
+        <a href="{% url 'park_system:tickets' %}">All Tickets</a> &nbsp;|&nbsp;
+        <a href="{% url 'park_system:vehicles' %}">Vehicles</a>
+    </div>
+</div>
+
+<div class="page">
+
+    {# ---- Alert: unpaid closed tickets ---- #}
+    {% if unpaid_closed %}
+    <div class="alert">
+        ⚠️ <strong>{{ unpaid_closed|length }} closed ticket{{ unpaid_closed|length|pluralize }} unpaid</strong>
+        — ₦{{ unpaid_revenue_at_risk|default:0 }} at risk of leakage.
+    </div>
+    {% endif %}
+
+    {# ---- Stat cards ---- #}
+    <div class="stats">
+        <div class="card info">
+            <div class="number">{{ total_vehicles }}</div>
+            <div class="label">Total Vehicles</div>
+        </div>
+        <div class="card info">
+            <div class="number">{{ total_slots }}</div>
+            <div class="label">Total Slots</div>
+        </div>
+        <div class="card warning">
+            <div class="number">{{ occupied_slots }}</div>
+            <div class="label">Occupied Slots</div>
+        </div>
+        <div class="card good">
+            <div class="number">{{ free_slots }}</div>
+            <div class="label">Free Slots</div>
+        </div>
+        <div class="card info">
+            <div class="number">{{ active_sessions }}</div>
+            <div class="label">Active Sessions</div>
+        </div>
+        <div class="card good">
+            <div class="number">₦{{ total_revenue }}</div>
+            <div class="label">Revenue Collected</div>
+        </div>
+        <div class="card danger">
+            <div class="number">₦{{ unpaid_revenue_at_risk }}</div>
+            <div class="label">Revenue at Risk</div>
+        </div>
+        <div class="card danger">
+            <div class="number">{{ flagged_vehicles|length }}</div>
+            <div class="label">Flagged Vehicles</div>
+        </div>
+    </div>
+
+    {# ---- Unpaid closed tickets ---- #}
+    <div class="section">
+        <h2>⚠️ Unpaid Closed Tickets</h2>
+        {% if unpaid_closed %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Ticket</th>
+                    <th>Plate</th>
+                    <th>Exit Time</th>
+                    <th>Amount Owed</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in unpaid_closed %}
+                <tr>
+                    <td>{{ ticket.code|truncatechars:8 }}</td>
+                    <td>{{ ticket.vehicle.number_plate }}</td>
+                    <td>{{ ticket.exit_time|date:"d M Y H:i" }}</td>
+                    <td>₦{{ ticket.amount }}</td>
+                    <td>
+                        <a class="btn btn-primary"
+                           href="{% url 'park_system:ticket_detail' code=ticket.code %}">
+                            View
+                        </a>
+                        <form method="POST"
+                              action="{% url 'park_system:reopen_ticket' code=ticket.code %}"
+                              style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="reason" value="Reopened from admin dashboard">
+                            <button class="btn btn-danger" type="submit">Reopen</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="empty">No unpaid closed tickets. ✓</p>
+        {% endif %}
+    </div>
+
+    {# ---- Flagged vehicles ---- #}
+    <div class="section">
+        <h2>🚩 Flagged Vehicles</h2>
+        {% if flagged_vehicles %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Plate</th>
+                    <th>Make</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vehicle in flagged_vehicles %}
+                <tr>
+                    <td>{{ vehicle.number_plate }}</td>
+                    <td>{{ vehicle.vehicle_make }}</td>
+                    <td>{{ vehicle.vehicle_type }}</td>
+                    <td><span class="badge red">Flagged</span></td>
+                    <td>
+                        <a class="btn btn-primary"
+                           href="{% url 'park_system:vehicles' %}">
+                            View
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="empty">No flagged vehicles. ✓</p>
+        {% endif %}
+    </div>
+
+    {# ---- Overdue active sessions ---- #}
+    <div class="section">
+        <h2>🕐 Overdue Active Sessions</h2>
+        {% if overdue_tickets %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Ticket</th>
+                    <th>Plate</th>
+                    <th>Slot</th>
+                    <th>Entry Time</th>
+                    <th>Overdue Since</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in overdue_tickets %}
+                <tr>
+                    <td>{{ ticket.code|truncatechars:8 }}</td>
+                    <td>{{ ticket.vehicle.number_plate }}</td>
+                    <td>{{ ticket.slot }}</td>
+                    <td>{{ ticket.entry_time|date:"d M Y H:i" }}</td>
+                    <td>
+                        <span class="badge orange">
+                            {{ ticket.overdue_since|date:"d M Y H:i" }}
+                        </span>
+                    </td>
+                    <td>
+                        <a class="btn btn-primary"
+                           href="{% url 'park_system:ticket_detail' code=ticket.code %}">
+                            View
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="empty">No overdue sessions. ✓</p>
+        {% endif %}
+    </div>
+
+    {# ---- Recent audit activity ---- #}
+    <div class="section">
+        <h2>📋 Recent Activity</h2>
+        {% if recent_logs %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Action</th>
+                    <th>By</th>
+                    <th>Vehicle</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in recent_logs %}
+                <tr>
+                    <td>{{ log.timestamp|date:"d M H:i" }}</td>
+                    <td>
+                        <span class="badge
+                            {% if 'paid' in log.action or 'started' in log.action %}green
+                            {% elif 'flagged' in log.action or 'deleted' in log.action %}red
+                            {% else %}orange{% endif %}">
+                            {{ log.get_action_display }}
+                        </span>
+                    </td>
+                    <td>{{ log.performed_by.username|default:"System" }}</td>
+                    <td>{{ log.vehicle.number_plate|default:"—" }}</td>
+                    <td>
+                        {% for key, value in log.metadata.items %}
+                            <small>{{ key }}: {{ value }}</small><br>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="empty">No recent activity.</p>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock content %}

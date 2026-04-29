@@ -11,7 +11,13 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 import os
 import dj_database_url
-from pathlib import Path
+from pathlib import Path 
+from dotenv import load_dotenv
+load_dotenv()
+
+PAYSTACK_SECRET_KEY = os.getenv("PAYSTACK_SECRET_KEY")
+PAYSTACK_PUBLIC_KEY = os.getenv("PAYSTACK_PUBLIC_KEY")
+PAYSTACK_BASE_URL = os.getenv("PAYSTACK_BASE_URL", "https://api.paystack.co")
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -22,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$x6=ph*_4is6b^mxw8x-&hx(#(eeu3r#94sw&4peu+b+(%cd(r'
+SECRET_KEY =  os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -35,6 +41,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'park_system',
     'accounts',
+    'django_q',
     'django_bootstrap5',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -83,6 +90,17 @@ DATABASES = {
         default=f"sqlite:///{BASE_DIR}/db.sqlite3"
     )
 }
+
+Q_CLUSTER = {
+    'name': 'parking_system',
+    'workers': 2,           # how many parallel workers
+    'recycle': 500,         # restart worker after 500 tasks (memory management)
+    'timeout': 60,          # task must finish within 60 seconds
+    'retry': 120,           # retry failed tasks after 120 seconds
+    'queue_limit': 50,      # max tasks waiting in queue
+    'bulk': 10,             # process 10 tasks at a time
+    'orm': 'default'        # ← use your existing database, no Redis needed
+} 
 
 
 # Password validation

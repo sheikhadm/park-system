@@ -32,7 +32,31 @@
         <p><strong>Exit Time:</strong> {{ ticket.exit_time }}</p>
         <p><strong>Duration:</strong> {{ duration }}</p>
         <p><strong>Parking Fee:</strong> ₦{{ ticket.amount }}</p>
+        <p>Payment:
+        {% if ticket.payment_status %}
+            <strong style="color: green;">PAID</strong> at {{ ticket.paid_at }}
+        {% else %}
+            <strong style="color: red;">UNPAID</strong>
+            {% if request.user.profile.is_admin or request.user.profile.is_attendant %}
+                <form method="POST" action="{% url 'park_system:initiate_payment' code=ticket.code  %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-pay">
+                            Send Payment Link to Customer
+                    </button>
+                </form>
+          
+            {% else %}
+                <form method="POST" action="{% url 'park_system:initiate_payment' code=ticket.code %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-pay">
+                            Pay ₦{{ ticket.amount }} with Paystack
+                        </button>
+                    </form>
 
+            {% endif %}
+            
+        {% endif %}
+</p>
         <div class="alert alert-success mt-3">
             Session Completed
         </div>
@@ -44,7 +68,23 @@
                 Exit Parking
             </button>
         </form>
-    {% endif %}
+    {% endif %} 
+    {% if ticket.exit_time and not ticket.payment_status and request.user.profPay ₦{{ ticket.amount }} with Paystack %}
+        <form method="POST" action="{% url 'park_system:reopen_ticket' code=ticket.code %}">
+            {% csrf_token %}
+            <div>
+                <label for="reason">Reason for reopening:</label>
+                <input 
+                    type="text" 
+                    name="reason" 
+                    id="reason" 
+                    required 
+                    placeholder="e.g. Wrong exit time recorded"
+                >
+            </div>
+            <button type="submit">Reopen Ticket</button>
+        </form>
+        {% endif %}
 
 </div>
 {% endblock content %}

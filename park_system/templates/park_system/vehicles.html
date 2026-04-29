@@ -5,7 +5,14 @@
 
 <div class="d-flex justify-content-between mb-3">
     <h2>Your Vehicles</h2>
-    <a href="{% url 'park_system:add_vehicle' %}" class="btn btn-primary">+ Add Vehicle</a>
+    {% if request.user.profile.is_admin or request.user.profile.is_attendant %}
+        <a href="{% url 'park_system:attendant_add_vehicle' %}" class="btn btn-info">
+        Add Vehicle for Customer
+    </a>
+    {% else %}
+        <a href="{% url 'park_system:add_vehicle' %}" class="btn btn-primary">+ Add Vehicle</a>
+
+    {% endif %}
 </div>
 
 <div class="row">
@@ -16,13 +23,22 @@
 
                 <h5>{{ vehicle.vehicle_make }}</h5>
                 <p>{{ vehicle.number_plate }}</p>
-
-                <form method="POST" action="{% url 'park_system:start_session' vehicle.id %}">
-                    {% csrf_token %}
-                    <button class="btn btn-primary w-100">
-                        Start Parking Session
-                    </button>
-                </form>
+                {% if request.user.profile.is_admin  or request.user.profile.is_attendant%}
+                    <form method="POST" action="{% url 'park_system:attendant_start_session' vehicle.id %}">
+                        {% csrf_token %}
+                        <button class="btn btn-primary w-100">
+                            Start Parking Session
+                        </button>
+                    </form>
+                {% else %}
+                    <form method="POST" action="{% url 'park_system:start_session' vehicle.id %}">
+                        {% csrf_token %}
+                        <button class="btn btn-primary w-100">
+                            Start Parking Session
+                        </button>
+                    </form>
+                {% endif %}
+                
                 <a href="{% url 'park_system:delete_vehicle' vehicle.id %}"class="btn btn-danger btn-sm">Delete</a>
 
             </div>

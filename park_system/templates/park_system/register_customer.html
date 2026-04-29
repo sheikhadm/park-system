@@ -1,0 +1,78 @@
+{% extends "park_system/base.html" %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="card">
+    <h2>Register New Customer</h2>
+    <p class="subtitle">Registered by {{ request.user.username }} ({{ request.user.profile.role }})</p>
+
+    {# Success message #}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {# Non-field errors #}
+    {% if form.non_field_errors %}
+        <div class="errors">
+            {% for error in form.non_field_errors %}
+                <div class="error-msg">{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="row">
+            <div class="field">
+                <label for="id_first_name">First Name</label>
+                <input type="text" name="first_name" id="id_first_name"
+                       value="{{ form.first_name.value|default:'' }}">
+            </div>
+            <div class="field">
+                <label for="id_last_name">Last Name</label>
+                <input type="text" name="last_name" id="id_last_name"
+                       value="{{ form.last_name.value|default:'' }}">
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="id_username">Username <span style="color:red">*</span></label>
+            <input type="text" name="username" id="id_username"
+                   value="{{ form.username.value|default:'' }}" required>
+            {% if form.username.errors %}
+                <div class="field-error">{{ form.username.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="id_email">Email</label>
+            <input type="email" name="email" id="id_email"
+                   value="{{ form.email.value|default:'' }}">
+            {% if form.email.errors %}
+                <div class="field-error">{{ form.email.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="id_password">Password <span style="color:red">*</span></label>
+            <input type="password" name="password" id="id_password" required>
+            {% if form.password.errors %}
+                <div class="field-error">{{ form.password.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="field">
+            <label for="id_confirm_password">Confirm Password <span style="color:red">*</span></label>
+            <input type="password" name="confirm_password" id="id_confirm_password" required>
+            {% if form.confirm_password.errors %}
+                <div class="field-error">{{ form.confirm_password.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn">Create Customer Account</button>
+    </form>
+</div>
+{% endblock %}

@@ -61,6 +61,23 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(6px);
         }
+        .card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        .page { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+        .card .label { font-size: 0.85rem; color: #777; }
+        .card.danger .number { color: #c0392b; }
+        .card.warning .number { color: #e67e22; }
+        .card.good .number { color: #27ae60; }
+        .card.info .number { color: #2980b9; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
 
         /* Buttons */
         .btn-primary {
@@ -90,6 +107,47 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
             font-size: 0.95rem;
         }
+        .topbar {
+            background: #1a1a2e;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .topbar a { color: #aaa; text-decoration: none; font-size: 0.9rem; }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            font-size: 0.9rem;
+        }
+        th {
+            background: #1a1a2e;
+            color: white;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        td { padding: 0.7rem 1rem; border-bottom: 1px solid #f0f0f0; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #fafafa; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 99px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .badge.red { background: #fdecea; color: #c0392b; }
+        .badge.orange { background: #fef3e2; color: #e67e22; }
+        .badge.green { background: #eafaf1; color: #27ae60; }
+
+
 
         /* Container spacing */
         .container {
@@ -146,8 +204,16 @@
              <li class="nav-item">
                 <a class="nav-link" href="{% url 'park_system:tickets' %}">Tickets</a>
             </li>
+            {% if request.user.profile.is_admin %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'park_system:admin_dashboard' %}">Admin Dashboard</a>
+            </li>
+            {% endif %}
         </ul>
         {% endif %}
+        
+      
+        
 
         <ul class="navbar-nav ms-auto">
             {% if user.is_authenticated %}

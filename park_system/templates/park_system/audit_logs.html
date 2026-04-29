@@ -1,0 +1,48 @@
+<h2>Audit Log</h2>
+
+<form method="GET">
+    <select name="action">
+        <option value="">All Actions</option>
+        {% for value, label in actions %}
+            <option value="{{ value }}" {% if request.GET.action == value %}selected{% endif %}>
+                {{ label }}
+            </option>
+        {% endfor %}
+    </select>
+    <button type="submit">Filter</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Time</th>
+            <th>Action</th>
+            <th>Performed By</th>
+            <th>Ticket</th>
+            <th>Vehicle</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.timestamp }}</td>
+            <td>{{ log.get_action_display }}</td>
+            <td>{{ log.performed_by.username }}</td>
+            <td>
+                {% if log.ticket %}
+                    <a href="{% url 'park_system:ticket_detail' code=log.ticket.code %}">
+                        {{ log.ticket.code|truncatechars:8 }}
+                    </a>
+                {% else %}—{% endif %}
+            </td>
+            <td>{{ log.vehicle.number_plate|default:"—" }}</td>
+            <td>
+                {% for key, value in log.metadata.items %}
+                    <small>{{ key }}: {{ value }}</small><br>
+                {% endfor %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

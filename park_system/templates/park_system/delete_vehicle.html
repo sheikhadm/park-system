@@ -16,7 +16,7 @@
 <strong>{{ vehicle }}</strong>
 </div>
 
-<form method="post">
+<form method="post" action="{% url 'park_system:delete_vehicle' vehicle.id %}">
 {% csrf_token %}
 
 <button type="submit" class="btn btn-danger">Delete Vehicle</button>
