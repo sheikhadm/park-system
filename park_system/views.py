@@ -1030,29 +1030,3 @@ def paystack_webhook(request):
     # Always return 200 to Paystack — even if we did nothing
     return JsonResponse({"status": "ok"})
 
-
-def create_admin_once(request):
-    SECRET = "i-am-still-finding-myself"  
-
-    if request.GET.get("token") != SECRET:
-        raise Http404  
-
-    from django.contrib.auth.models import User
-    from .models import UserProfile
-
-    username = "admin"
-    password = "Khadijah"  
-
-    if User.objects.filter(username=username).exists():
-        return JsonResponse({"status": "already exists"})
-
-    user = User.objects.create_superuser(
-        username=username,
-        email="admin@parkingsystem.com",
-        password=password
-    )
-    profile, _ = UserProfile.objects.get_or_create(user=user)
-    profile.role = UserProfile.Role.ADMIN
-    profile.save()
-
-    return JsonResponse({"status": "admin created", "username": username})
