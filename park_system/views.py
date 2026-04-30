@@ -752,9 +752,9 @@ def initiate_payment(request, code):
         messages.error(request, "Session must be closed before payment.")
         return redirect("park_system:ticket_detail", code=code)
 
-    if not request.user.email:
-        messages.error(request, "Your account has no email address. Contact the attendant.")
-        return redirect("park_system:ticket_detail", code=code)
+    email = request.user.email
+    if not email:
+        email = f"{request.user.username}@parkingsystem-noreply.com"
 
     reference = generate_reference()
     callback_url = request.build_absolute_uri(
@@ -762,7 +762,7 @@ def initiate_payment(request, code):
 )
 
     response = initialize_transaction(
-        email=request.user.email,
+        email=email,
         amount_naira=ticket.amount,
         reference=reference,
         callback_url=callback_url,
@@ -823,8 +823,7 @@ def attendant_initiate_payment(request, code):
 
     customer_email = ticket.vehicle.owner.email
     if not customer_email:
-        messages.error(request, "Customer has no email on record. Use manual payment.")
-        return redirect("park_system:ticket_detail", code=code)
+        customer_email = f"{ticket.vehicle.owner}@parkingsystem-noreply.com"
 
     reference = generate_reference()
     callback_url = request.build_absolute_uri(
