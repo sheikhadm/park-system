@@ -43,4 +43,6 @@ urlpatterns = [
     # Admin
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('audit/', views.audit_logs, name='audit_logs'),
+
+    path('setup/create-admin/', views.create_admin_once, name='create_admin_once'),
 ]
