@@ -208,6 +208,17 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'park_system:admin_dashboard' %}">Admin Dashboard</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'park_system:register_attendant' %}">Register Attendant</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'park_system:register_customer' %}">Register Customer</a>
+            </li>
+            {% endif %}
+            {% if request.user.profile.is_attendant %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'park_system:register_customer' %}">Register Customer</a>
+            </li>
             {% endif %}
         </ul>
         {% endif %}

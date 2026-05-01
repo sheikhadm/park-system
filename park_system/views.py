@@ -579,7 +579,6 @@ def register_attendant(request):
                 email=form.cleaned_data['email'],
                 password=form.cleaned_data['password']
             )
-            # set their role to attendant
             user.profile.role = UserProfile.Role.ATTENDANT
             user.profile.save()
 

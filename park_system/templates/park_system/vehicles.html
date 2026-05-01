@@ -30,6 +30,21 @@
                             Start Parking Session
                         </button>
                     </form>
+                    {% if vehicle.is_active == False %}
+                        <form method="POST" action="{% url 'park_system:entry' vehicle.id %}">
+                        {% csrf_token %}
+                        <button class="btn btn-primary w-100">
+                            Activate Car Parking
+                        </button>
+                        </form>
+                    {% else %}
+                        <form method="POST" action="{% url 'park_system:exit_park' vehicle.id %}">
+                        {% csrf_token %}
+                        <button class="btn btn-primary w-100">
+                            Deactivate Car Parking
+                        </button>
+                        </form>
+
                 {% else %}
                     <form method="POST" action="{% url 'park_system:start_session' vehicle.id %}">
                         {% csrf_token %}
