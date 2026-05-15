@@ -44,7 +44,7 @@
                             Deactivate Car Parking
                         </button>
                         </form>
-
+                    {% endif %}
                 {% else %}
                     <form method="POST" action="{% url 'park_system:start_session' vehicle.id %}">
                         {% csrf_token %}
